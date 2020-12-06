@@ -15,11 +15,12 @@ struct Part {
 	int collisions;
 };
 
-struct  CSMD {
+struct  CSMACD {
 
 	static bool hasJam;
 	static QRandomGenerator *rmd;
 
+	QString source;
 	QList<Part> parts;	
 
 	static bool chance() {
@@ -31,15 +32,15 @@ struct  CSMD {
 		QThread::msleep(c);	
 	}
 
-	static Part doCsmd(const std::string &source) {
+	static Part doPart(const std::string &source) {
 		int channelAttempts = 0;
-		while (!CSMD::chance()) 
-			CSMD::delay(channelAttempts++); 
+		while (!CSMACD::chance()) 
+			CSMACD::delay(channelAttempts++); 
 		
 		int attempts = 0;
 		while (true) {
-			if (!CSMD::chance()) break;
-			CSMD::hasJam = true;
+			if (!CSMACD::chance()) break;
+			CSMACD::hasJam = true;
 			if (++attempts == 10) {
 				return Part{source, 10};
 			}
@@ -48,19 +49,20 @@ struct  CSMD {
 		return Part{source, attempts}; 
 	}
 
-	static CSMD streamCsmd(int frameSize, std::string source) {
+	static CSMACD streamCsmaCd(int frameSize, std::string source) {
+		QString output = QString::fromStdString(source);
 		if (source.size() % frameSize != 0)
 			source += std::string(source.size() % frameSize, '0');
 		QList<Part> ret;
 		for (int i = 0; i < source.size(); i+=frameSize) {
-			ret.append(CSMD::doCsmd(source.substr(i, frameSize)));
+			ret.append(CSMACD::doPart(source.substr(i, frameSize)));
 		}
-		return CSMD{ret};
+		return CSMACD{output,ret};
 	}
 };
 
-QRandomGenerator *CSMD::rmd = new QRandomGenerator;
-bool CSMD::hasJam = false;
+QRandomGenerator *CSMACD::rmd = new QRandomGenerator;
+bool CSMACD::hasJam = false;
 
 class MainWindow : public QMainWindow {
 	std::unique_ptr<Ui::MainWindow> ui;
@@ -74,7 +76,7 @@ public:
 		setResult(nullptr);
 	}
 
-	void setResult(CSMD *res) {
+	void setResult(CSMACD *res) {
 		if (res== nullptr) {
 			ui->input->clear();
 			ui->out->clear();
@@ -91,6 +93,7 @@ public:
 					result += "|" + QString(part.collisions, '*') + "<br/>";
 				}
 			}
+			ui->out->setText(res->source);
 			ui->status->setHtml(result);
 		}
 	}
@@ -98,7 +101,7 @@ public:
 	void onSendClicked() {
 		auto text = ui->input->toPlainText();
 		if (!text.isEmpty()) {
-			auto res = CSMD::streamCsmd(2, text.toStdString());
+			auto res = CSMACD::streamCsmaCd(2, text.toStdString());
 			setResult(&res);
 		}
 	}
