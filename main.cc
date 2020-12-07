@@ -99,7 +99,7 @@ public:
 	}
 
 	void onSendClicked() {
-		auto text = ui->input->toPlainText();
+		auto text = ui->input->text();
 		if (!text.isEmpty()) {
 			auto res = CSMACD::streamCsmaCd(2, text.toStdString());
 			setResult(&res);
