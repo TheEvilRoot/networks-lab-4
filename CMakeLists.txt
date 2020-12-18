@@ -22,6 +22,6 @@ qt5_wrap_ui(SOURCES main.ui)
 
 add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SOURCES})
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${QT_PATH}bin/macdeployqt networks_lab_4.app)
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${QT_PATH}bin/macdeployqt ${PROJECT_NAME}.app)
 
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
