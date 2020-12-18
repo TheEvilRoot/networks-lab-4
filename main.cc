@@ -79,8 +79,11 @@ public:
 	void setResult(CSMACD *res) {
 		if (res== nullptr) {
 			ui->input->clear();
+			ui->input->repaint();
 			ui->out->clear();
+			ui->out->repaint();
 			ui->status->clear();
+			ui->status->repaint();
 		} else {
 			int index = 0 ;
 			QString result;
@@ -94,7 +97,9 @@ public:
 				}
 			}
 			ui->out->setText(res->source);
+			ui->out->repaint();
 			ui->status->setHtml(result);
+			ui->status->repaint();
 		}
 	}
 
