@@ -28,7 +28,7 @@ struct  CSMACD {
 	}
 
 	static void delay(int a) {
-		auto c = rmd->securelySeeded().bounded(0, pow(2, a));
+        unsigned long c = rmd->securelySeeded().bounded(0, (int) pow(2, a));
 		QThread::msleep(c);	
 	}
 
@@ -106,7 +106,7 @@ public:
 	void onSendClicked() {
 		auto text = ui->input->text();
 		if (!text.isEmpty()) {
-			auto res = CSMACD::streamCsmaCd(2, text.toStdString());
+            auto res = CSMACD::streamCsmaCd(1, text.toStdString());
 			setResult(&res);
 		}
 	}
